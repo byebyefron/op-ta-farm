@@ -1,0 +1,132 @@
+local function deleteBots()
+    local bots = game.Workspace:FindFirstChild("Botlar")
+    if bots then
+        bots:Destroy()
+        print("Botlar başarıyla silindi.")
+    else
+        print("Botlar bulunamadı.")
+    end
+end
+
+deleteBots()
+
+local function getNil(name, class)
+    for _, v in next, game:GetDescendants() do
+        if v.ClassName == class and v.Name == name then
+            return v
+        end
+    end
+end
+
+local function showNotification(message, duration)
+    if game:GetService("UserInputService").TouchEnabled then
+        return  -- Eğer mobil cihaz ise, mesajı göstermeden çık
+    end
+
+    local notificationGui = Instance.new("ScreenGui")
+    notificationGui.Parent = game.Players.LocalPlayer.PlayerGui
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0.3, 0, 0.1, 0)
+    frame.Position = UDim2.new(0.7, -10, 0.9, -10)
+    frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    frame.BorderSizePixel = 2
+    frame.BorderColor3 = Color3.fromRGB(255, 255, 255)
+    frame.Parent = notificationGui
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.Text = message
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.BackgroundTransparency = 1
+    label.Font = Enum.Font.SourceSansBold
+    label.TextSize = 24
+    label.Parent = frame
+
+    local sound = Instance.new("Sound")
+    sound.SoundId = "rbxassetid://2865226178"
+    sound.Parent = notificationGui
+    sound:Play()
+
+    wait(duration)
+    notificationGui:Destroy()
+end
+
+local function teleportAndAutofarm()
+    local regions = {
+        {name = "B", waitTime = 40},
+        {name = "E", waitTime = 40},
+        {name = "F", waitTime = 40},
+        {name = "G", waitTime = 40},
+        {name = "H", waitTime = 40},
+        {name = "C", waitTime = 40},
+        {name = "A", waitTime = 40},
+        {name = "D", waitTime = 40}
+    }
+
+    for _, region in ipairs(regions) do
+        local point = getNil(region.name, "Part")
+        if point and game.Players.LocalPlayer then
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = point.CFrame * CFrame.new(0, 3, 0)
+            wait(region.waitTime)
+        else
+            print(region.name .. " bölgesi bulunamadı veya LocalPlayer yok.")
+        end
+    end
+end
+
+local function setupGui()
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Parent = game.Players.LocalPlayer.PlayerGui
+
+    local Frame = Instance.new("Frame")
+    Frame.Size = UDim2.new(0, 200, 0, 100)
+    Frame.Position = UDim2.new(1, -210, 0, 10)
+    Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Frame.BorderSizePixel = 2
+    Frame.BorderColor3 = Color3.fromRGB(255, 255, 255)
+    Frame.Parent = ScreenGui
+
+    local FarmButton = Instance.new("TextButton")
+    FarmButton.Text = "Farmı Başlat"
+    FarmButton.Size = UDim2.new(0, 180, 0, 30)
+    FarmButton.Position = UDim2.new(0, 10, 0, 10)
+    FarmButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    FarmButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    FarmButton.BorderSizePixel = 1
+    FarmButton.Parent = Frame
+
+    local OperasyonButton = Instance.new("TextButton")
+    OperasyonButton.Text = "Operasyona Git"
+    OperasyonButton.Size = UDim2.new(0, 180, 0, 30)
+    OperasyonButton.Position = UDim2.new(0, 10, 0, 50)
+    OperasyonButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    OperasyonButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    OperasyonButton.BorderSizePixel = 1
+    OperasyonButton.Parent = Frame
+
+    FarmButton.MouseButton1Click:Connect(function()
+        showNotification("Xenty iyi oyunlar diler!", 3)
+        teleportAndAutofarm()
+    end)
+
+    OperasyonButton.MouseButton1Click:Connect(function()
+        local operasyonGui = game.Players.LocalPlayer.PlayerGui:FindFirstChild("Operasyon")
+        if operasyonGui then
+            operasyonGui.Enabled = true
+            local operasyonlarButton = operasyonGui:FindFirstChild("Operasyonlar")
+            if operasyonlarButton then
+                operasyonlarButton.MouseButton1Click:Connect(function()
+                    showNotification("Xenty iyi oyunlar diler!", 3)
+                    teleportAndAutofarm()
+                end)
+            else
+                warn("Operasyonlar butonu bulunamadı!")
+            end
+        else
+            warn("Operasyon GUI bulunamadı!")
+        end
+    end)
+end
+
+setupGui()
